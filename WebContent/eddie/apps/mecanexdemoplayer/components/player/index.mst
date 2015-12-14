@@ -1,0 +1,3 @@
+<video id="videoplayer" controls="controls" preload="preload" poster="{{videoPoster}}">
+	<source type="video/mp4" src="{{videoSrc}}"/>
+</video>

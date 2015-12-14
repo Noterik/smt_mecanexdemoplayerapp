@@ -1,0 +1,98 @@
+<app>
+	<view id="#screen">
+		<template>screen.mst</template>
+		<controller id="ScreenController">
+		</controller>
+	</view>	
+	
+	<view id="#inputform">
+		<controller id="InputFormController">
+			<template>inputform/index.mst</template>
+			<javascript>inputform/InputFormController.js</javascript>
+			<usernameText>Username</usernameText>
+			<videoidText>EUScreen Luce video id</videoidText>
+		</controller>
+	</view>
+	
+	<view id="#videoid">
+		<controller id="InputFieldController">
+			<template>inputform/InputField.mst</template>
+			<javascript>inputform/InputFieldController.js</javascript>
+			<value>EUS_31099537429A9593A87DB55E02559F96</value>
+		</controller>
+	</view>
+	
+	<view id="#username">
+		<controller id="InputFieldController">
+			<template>inputform/InputField.mst</template>
+			<javascript>inputform/InputFieldController.js</javascript>
+		</controller>
+	</view>
+	
+	<view id="#submitButton">
+		<controller id="SubmitButtonController">
+			<template>inputform/SubmitButton.mst</template>
+			<javascript>inputform/SubmitButtonController.js</javascript>
+			<buttonText>Submit</buttonText>
+			<fieldsToSubmit>username,videoid</fieldsToSubmit>
+		</controller>
+	</view>
+	
+	<view id="#like">
+		<controller id="InputFieldController">
+			<template>inputform/InputField.mst</template>
+			<javascript>inputform/InputFieldController.js</javascript>
+			<value>like</value>
+		</controller>
+	</view>
+	
+	<view id="#likeButton">
+		<controller id="SubmitButtonController">
+			<template>inputform/SubmitButton.mst</template>
+			<javascript>inputform/SubmitButtonController.js</javascript>
+			<buttonText>Like</buttonText>
+			<fieldsToSubmit>like</fieldsToSubmit>
+		</controller>
+	</view>
+	
+	<view id="#dislike">
+		<controller id="InputFieldController">
+			<template>inputform/InputField.mst</template>
+			<javascript>inputform/InputFieldController.js</javascript>
+			<value>dislike</value>
+		</controller>
+	</view>
+	
+	<view id="#dislikeButton">
+		<controller id="SubmitButtonController">
+			<template>inputform/SubmitButton.mst</template>
+			<javascript>inputform/SubmitButtonController.js</javascript>
+			<buttonText>Dislike</buttonText>
+			<fieldsToSubmit>dislike</fieldsToSubmit>
+		</controller>
+	</view>
+	
+	<view id="#indifferent">
+		<controller id="InputFieldController">
+			<template>inputform/InputField.mst</template>
+			<javascript>inputform/InputFieldController.js</javascript>
+			<value>indifferent</value>
+		</controller>
+	</view>
+	
+	<view id="#indifferentButton">
+		<controller id="SubmitButtonController">
+			<template>inputform/SubmitButton.mst</template>
+			<javascript>inputform/SubmitButtonController.js</javascript>
+			<buttonText>Indifferent</buttonText>
+			<fieldsToSubmit>indifferent</fieldsToSubmit>
+		</controller>
+	</view>
+	
+	<view id="#player">		
+		<controller id="PlayerController">
+			<template>player/index.mst</template>
+			<javascript>player/VideoPlayerController.js</javascript>
+		</controller>
+	</view>
+</app>

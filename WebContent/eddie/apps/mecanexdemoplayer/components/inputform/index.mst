@@ -1,0 +1,13 @@
+<form action="javascript:void(0);">
+
+{{usernameText}}: <div id="username"/>
+{{videoidText}}: <div id="videoid"/>
+
+<div id="submitButton" style="float: left;" />
+<div id="like" style="display:none;" />
+<div id="likeButton" style="float: left; display: none;" />
+<div id="dislike" style="display:none;" />
+<div id="dislikeButton" style="float: left; display: none;" />
+<div id="indifferent" style="display:none;" />
+<div id="indifferentButton" style="float: left; display: none;" />
+</form>
