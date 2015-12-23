@@ -20,6 +20,7 @@ VideoPlayerController.update = function(vars, data) {
 		var obj = {};
 		obj['action'] = "video_stop";
 		obj['value'] = currentTime;
+		obj['duration'] = this.duration;
 		eddie.sendEvent(data['targetid'],"playerEvent",obj);
 	});
 	

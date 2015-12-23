@@ -227,6 +227,9 @@ public class PlayerController extends Html5Controller {
 		form.getEntries().add(new FormData("device_id", event.deviceId));
 		form.getEntries().add(new FormData("action", Integer.toString(event.action)));
 		form.getEntries().add(new FormData(event.actionName, event.actionValue));
+		if (action.equals("video_stop")) {
+			form.getEntries().add(new FormData("duration", Double.toString((Double) data.get("duration"))));
+		}
 		
 		try {
 			System.out.println(form.getText());
@@ -255,9 +258,11 @@ public class PlayerController extends Html5Controller {
 			FsNode node = model.getNode(url);
 			String videoId = node.getProperty("videoId");
 			
-			if (!screen.getProperty("videoId").equals(videoId)) {
-				screen.setProperty("videoId", videoId);
-				loadScreen();
+			if (videoId != null) {
+				if (!screen.getProperty("videoId").equals(videoId)) {
+					screen.setProperty("videoId", videoId);
+					loadScreen();
+				}
 			}
 		}
 	}
