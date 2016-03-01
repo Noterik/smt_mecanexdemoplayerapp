@@ -34,4 +34,11 @@ VideoPlayerController.update = function(vars, data) {
 		obj['value'] = currentTime;
 		eddie.sendEvent(data['targetid'],"playerEvent",obj);
 	});
+	
+	$(window).bind('beforeunload', function() {
+		var obj = {};
+		obj['action'] = "relevance_feedback";
+		obj['value'] = 0;
+		eddie.sendEvent(data['targetid'],"playerEvent",obj);
+	});
 };

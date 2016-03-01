@@ -20,13 +20,21 @@
 */
 package org.springfield.lou.application.types.inputform;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 
 import org.json.simple.JSONObject;
+import org.restlet.data.Form;
+import org.restlet.engine.header.Header;
+import org.restlet.engine.header.HeaderConstants;
 import org.restlet.ext.html.FormData;
 import org.restlet.ext.html.FormDataSet;
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
+import org.restlet.util.Series;
 import org.springfield.fs.FsNode;
 import org.springfield.lou.controllers.Html5Controller;
 import org.springfield.lou.events.MecanexEvent;
@@ -42,7 +50,10 @@ import org.springfield.lou.screen.Screen;
  */
 public class InputFormController extends Html5Controller {
 	
+	private static final String AUTHORIZATION_FILE = "/springfield/keys/mecanex-sptool.auth";
+	
 	private String template;
+	private String authorizationKey;
 	private JSONObject response;
 	
 	public InputFormController() {
@@ -89,6 +100,8 @@ public class InputFormController extends Html5Controller {
 		screen.get("#indifferentButton").attach(new SubmitButtonController());
 		screen.bind("#indifferentButton", "client", "rateButtonClicked", this);
 		
+		authorizationKey = getAuthorizationKey();
+		
 		//Observe for changes
 		model.observeNode(this,"/domain/mecanex/app/demoplayer/*");
 	}
@@ -125,8 +138,15 @@ public class InputFormController extends Html5Controller {
 		
 		MecanexEvent event = new MecanexEvent((String) screen.getProperty("username"), (String) screen.getProperty("videoId"), (String) screen.getProperty("deviceId"), action, value);
 		
-		ClientResource cr = new ClientResource("http://147.102.13.37/api/v1/videosignals");
-		//ClientResource cr = new ClientResource("http://flashdebug.noterik.com/pieter/post.php");
+		ClientResource client = new ClientResource("http://sptool.netmode.ntua.gr/api/v1/videosignals");
+		
+		Series<Header> headers = (Series<Header>) client.getRequestAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
+		if (headers == null) {
+			headers = new Series<Header>(Header.class);
+			client.getRequestAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, headers);
+		}
+		
+		headers.add("X-Authorization", authorizationKey);
 		
 		FormDataSet form = new FormDataSet();
 		form.getEntries().add(new FormData("username", event.username));
@@ -142,7 +162,7 @@ public class InputFormController extends Html5Controller {
 			System.out.println(e.toString());
 		}
 
-		Representation responseObject = cr.post(form); 
+		Representation responseObject = client.post(form); 
 		
 		System.out.println(responseObject.toString());
 		try {
@@ -178,5 +198,18 @@ public class InputFormController extends Html5Controller {
 				screen.get("#indifferentButton").hide();
 			}
 		}
+	}
+	
+	private String getAuthorizationKey() {
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(AUTHORIZATION_FILE));
+		    String key = br.readLine();
+		    br.close();
+		    
+		    return key;
+		} catch (Exception e) {
+			System.out.println("Error reading "+AUTHORIZATION_FILE);
+		}
+		return "";
 	}
 }

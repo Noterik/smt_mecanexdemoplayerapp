@@ -20,7 +20,9 @@
 */
 package org.springfield.lou.application.types.player;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -30,10 +32,13 @@ import java.util.Random;
 import java.util.Scanner;
 
 import org.json.simple.JSONObject;
+import org.restlet.engine.header.Header;
+import org.restlet.engine.header.HeaderConstants;
 import org.restlet.ext.html.FormData;
 import org.restlet.ext.html.FormDataSet;
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
+import org.restlet.util.Series;
 import org.springfield.fs.FSListManager;
 import org.springfield.fs.Fs;
 import org.springfield.fs.FsNode;
@@ -51,8 +56,10 @@ import org.springfield.lou.screen.Screen;
  */
 public class PlayerController extends Html5Controller {
 	
-	String template;
+	private static final String AUTHORIZATION_FILE = "/springfield/keys/mecanex-sptool.auth";
 	
+	private String template;
+	private String authorizationKey;
 	private JSONObject response;
 	
 	public PlayerController() {
@@ -72,6 +79,8 @@ public class PlayerController extends Html5Controller {
 		}
 
 		String deviceId = (String) screen.getProperty("deviceId");
+		
+		authorizationKey = getAuthorizationKey();
 		//Observe for changes
 		model.observeNode(this,"/domain/mecanex/app/demoplayer/*");
 	}
@@ -187,19 +196,25 @@ public class PlayerController extends Html5Controller {
 		httpResponseScanner.close();		
 	}
 	
-	public void playerEvent(Screen s, JSONObject data) {		
-		String action = (String) data.get("action"); 
+	public void playerEvent(Screen s, JSONObject data) {
+		String action = data.get("action").toString();
 		Object v = data.get("value");
 		String value = "";
 		
-		//handle possible different types of the value
-		if (v instanceof String) {
-			value = (String) v;
-		} else if (v instanceof Integer) {
-			value = Integer.toString((Integer) v);
+		System.out.println(data.toString());
+
+		if (v instanceof Long) {
+			value = Long.toString((Long) v);
 		} else if (v instanceof Double) {
 			value = Double.toString((Double) v);
-		}	
+		} else if (v instanceof String) {
+			value = (String) v;
+		} else {
+			System.out.println(v);
+			System.out.println(v.getClass());
+		}
+		
+		System.out.println("Value is "+value);
 		
 		if (action.equals("video_ended")) {
 			//Enable relevance feedback button once video has ended
@@ -218,8 +233,15 @@ public class PlayerController extends Html5Controller {
  		
 		MecanexEvent event = new MecanexEvent((String) screen.getProperty("username"), (String) screen.getProperty("videoId"), (String) screen.getProperty("deviceId"), action, value);
 		
-		ClientResource cr = new ClientResource("http://147.102.13.37/api/v1/videosignals");
-		//ClientResource cr = new ClientResource("http://flashdebug.noterik.com/pieter/post.php");
+		ClientResource client = new ClientResource("http://sptool.netmode.ntua.gr/api/v1/videosignals");
+
+		Series<Header> headers = (Series<Header>) client.getRequestAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
+		if (headers == null) {
+			headers = new Series<Header>(Header.class);
+			client.getRequestAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, headers);
+		}
+		
+		headers.add("X-Authorization", authorizationKey);
 		
 		FormDataSet form = new FormDataSet();
 		form.getEntries().add(new FormData("username", event.username));
@@ -228,9 +250,19 @@ public class PlayerController extends Html5Controller {
 		form.getEntries().add(new FormData("action", Integer.toString(event.action)));
 		form.getEntries().add(new FormData(event.actionName, event.actionValue));
 		if (action.equals("video_stop")) {
-			form.getEntries().add(new FormData("duration", Double.toString((Double) data.get("duration"))));
+			System.out.println("Video stop action");
+			Object d = data.get("duration");
+			if (d instanceof String) {
+				form.getEntries().add(new FormData("duration", (String) d));
+				System.out.println("Adding duration String");
+			} else if (d instanceof Long) {
+				form.getEntries().add(new FormData("duration", Long.toString((Long) d)));
+				System.out.println("Adding duration long");
+			} else if (d instanceof Double) {
+				form.getEntries().add(new FormData("duration", Double.toString((Double) d)));
+				System.out.println("Adding duration double");
+			}
 		}
-		
 		try {
 			System.out.println(form.getText());
 
@@ -238,7 +270,7 @@ public class PlayerController extends Html5Controller {
 			System.out.println(e.toString());
 		}
 
-		Representation responseObject = cr.post(form); 
+		Representation responseObject = client.post(form); 
 		
 		System.out.println(responseObject.toString());
 		try {
@@ -269,5 +301,18 @@ public class PlayerController extends Html5Controller {
 	
 	private void loadHtml() {
 		screen.get(selector).update(response);
+	}
+	
+	private String getAuthorizationKey() {
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(AUTHORIZATION_FILE));
+		    String key = br.readLine();
+		    br.close();
+		    
+		    return key;
+		} catch (Exception e) {
+			System.out.println("Error reading "+AUTHORIZATION_FILE);
+		}
+		return "";
 	}
 }

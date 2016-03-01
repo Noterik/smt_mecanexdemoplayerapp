@@ -6,8 +6,8 @@
 	<classpathentry kind="lib" path="libs/mojo.jar"/>
 	<classpathentry kind="lib" path="libs/servlet-api.jar"/>
 	<classpathentry kind="lib" path="libs/springfield-tools.jar"/>
-	<classpathentry kind="lib" path="libs/json-simple-1.1.1.jar"/>
 	<classpathentry kind="lib" path="libs/org.restlet.jar"/>
 	<classpathentry kind="lib" path="libs/org.restlet.ext.html.jar"/>
+	<classpathentry kind="lib" path="libs/json-simple-1.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
