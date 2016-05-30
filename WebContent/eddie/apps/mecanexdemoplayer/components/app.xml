@@ -38,6 +38,20 @@
 		</controller>
 	</view>
 	
+	<view id="#player">		
+		<controller id="PlayerController">
+			<template>player/index.mst</template>
+			<javascript>player/VideoPlayerController.js</javascript>
+		</controller>
+	</view>
+	
+	<view id="#relevancefeedback">
+		<controller id="RelevanceFeedbackController">
+			<template>relevancefeedback/index.mst</template>
+			<javascript>relevancefeedback/RelevanceFeedbackController.js</javascript>
+		</controller>
+	</view>
+	
 	<view id="#like">
 		<controller id="InputFieldController">
 			<template>inputform/InputField.mst</template>
@@ -86,13 +100,6 @@
 			<javascript>inputform/SubmitButtonController.js</javascript>
 			<buttonText>Indifferent</buttonText>
 			<fieldsToSubmit>indifferent</fieldsToSubmit>
-		</controller>
-	</view>
-	
-	<view id="#player">		
-		<controller id="PlayerController">
-			<template>player/index.mst</template>
-			<javascript>player/VideoPlayerController.js</javascript>
 		</controller>
 	</view>
 </app>

@@ -42,6 +42,7 @@ import org.restlet.util.Series;
 import org.springfield.fs.FSListManager;
 import org.springfield.fs.Fs;
 import org.springfield.fs.FsNode;
+import org.springfield.lou.application.types.MecanexdemoplayerApplication;
 import org.springfield.lou.controllers.Html5Controller;
 import org.springfield.lou.events.MecanexEvent;
 import org.springfield.lou.screen.Screen;
@@ -61,6 +62,7 @@ public class PlayerController extends Html5Controller {
 	private String template;
 	private String authorizationKey;
 	private JSONObject response;
+	private MecanexdemoplayerApplication app;
 	
 	public PlayerController() {
 		response = new JSONObject();
@@ -76,6 +78,8 @@ public class PlayerController extends Html5Controller {
 
 		if (screen!=null) {	
 			loadScreen();
+			screen.getApplication().onPathUpdate("/relevancefeedback/","onRelevanceFeedback",this);
+			app = (MecanexdemoplayerApplication)screen.getApplication();
 		}
 
 		String deviceId = (String) screen.getProperty("deviceId");
@@ -216,7 +220,11 @@ public class PlayerController extends Html5Controller {
 		
 		System.out.println("Value is "+value);
 		
-		if (action.equals("video_ended")) {
+		if (action.equals("video_relevancefeedback")) {
+			//signal player to pause first
+			app.setProperty("/videofeedback/ratebutton/clicked",value);
+			return;
+		} else if (action.equals("video_ended")) {
 			//Enable relevance feedback button once video has ended
 			String deviceId = (String) screen.getProperty("deviceId");
 			
@@ -314,5 +322,12 @@ public class PlayerController extends Html5Controller {
 			System.out.println("Error reading "+AUTHORIZATION_FILE);
 		}
 		return "";
+	}
+	
+	public void onRelevanceFeedback(String path, FsNode node) {
+		JSONObject data = new JSONObject();	
+		data.put("command","relevancefeedback");
+		data.put("feedback", node.getProperty("clicked"));
+		screen.get("#player").update(data);
 	}
 }

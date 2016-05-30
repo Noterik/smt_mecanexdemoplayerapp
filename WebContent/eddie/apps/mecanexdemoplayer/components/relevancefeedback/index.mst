@@ -1,0 +1,6 @@
+<div id="like" style="display:none;" />
+<div id="likeButton" style="float: left;" />
+<div id="dislike" style="display:none;" />
+<div id="dislikeButton" style="float: left;" />
+<div id="indifferent" style="display:none;" />
+<div id="indifferentButton" style="float: left;" />

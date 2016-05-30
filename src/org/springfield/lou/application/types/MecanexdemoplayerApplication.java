@@ -27,6 +27,7 @@ import org.springfield.fs.FsNode;
 import org.springfield.lou.application.Html5Application;
 import org.springfield.lou.application.types.inputform.InputFormController;
 import org.springfield.lou.application.types.player.PlayerController;
+import org.springfield.lou.application.types.relevancefeedback.RelevanceFeedbackController;
 import org.springfield.lou.controllers.ScreenController;
 import org.springfield.lou.screen.Screen;
 
@@ -75,5 +76,6 @@ public class MecanexdemoplayerApplication extends Html5Application {
 		 s.get("#screen").attach(new ScreenController());
 		 s.get("#inputform").attach(new InputFormController());
 		 s.get("#player").attach(new PlayerController());
+		 s.get("#relevancefeedback").attach(new RelevanceFeedbackController());
 	 }
 }
