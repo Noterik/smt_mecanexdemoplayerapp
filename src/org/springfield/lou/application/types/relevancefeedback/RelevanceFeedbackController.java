@@ -74,7 +74,7 @@ private static final String AUTHORIZATION_FILE = "/springfield/keys/mecanex-spto
 				screen.get(selector).loadScript(this);
 				screen.get(selector).template(template);
 			}
-			screen.getApplication().onPathUpdate("/videofeedback/","onRelevanceFeedback",this);
+			model.onPathUpdate("/app/videofeedback/","onRelevanceFeedback",this);
 			app = (MecanexdemoplayerApplication)screen.getApplication();
 		}
 		
@@ -111,7 +111,7 @@ private static final String AUTHORIZATION_FILE = "/springfield/keys/mecanex-spto
 		if (indifferent != null) { value = "0"; }
 		
 		//signal player to pause first
-		app.setProperty("/relevancefeedback/ratebutton/clicked",value);
+		model.setProperty("/app/relevancefeedback/ratebutton/clicked",value);
 	}
 
 	private void loadHtml() {		
@@ -124,7 +124,7 @@ private static final String AUTHORIZATION_FILE = "/springfield/keys/mecanex-spto
 		
 		System.out.println("Tree changed for device "+updatedDevice);
 		
-		if (((String) screen.getProperty("deviceId")).equals(updatedDevice)) {
+		if ((model.getProperty("/screen/deviceId")).equals(updatedDevice)) {
 			FsNode node = model.getNode(url);
 			System.out.println(node.asXML());
 			//check if the video has ended to show buttons
@@ -149,7 +149,7 @@ private static final String AUTHORIZATION_FILE = "/springfield/keys/mecanex-spto
 		
 		String action = "relevance_feedback";
 		
-		MecanexEvent event = new MecanexEvent((String) screen.getProperty("username"), (String) screen.getProperty("videoId"), (String) screen.getProperty("deviceId"), action, value);
+		MecanexEvent event = new MecanexEvent(model.getProperty("/screen/username"),model.getProperty("/screen/videoId"),model.getProperty("/screen/deviceId"), action, value);
 		
 		ClientResource client = new ClientResource("http://sptool.netmode.ntua.gr/api/v1/videosignals");
 		

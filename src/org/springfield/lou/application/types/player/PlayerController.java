@@ -78,11 +78,11 @@ public class PlayerController extends Html5Controller {
 
 		if (screen!=null) {	
 			loadScreen();
-			screen.getApplication().onPathUpdate("/relevancefeedback/","onRelevanceFeedback",this);
+			model.onPathUpdate("/app/relevancefeedback/","onRelevanceFeedback",this);
 			app = (MecanexdemoplayerApplication)screen.getApplication();
 		}
 
-		String deviceId = (String) screen.getProperty("deviceId");
+		String deviceId = (String) model.getProperty("/screen/deviceId");
 		
 		authorizationKey = getAuthorizationKey();
 		//Observe for changes
@@ -102,7 +102,7 @@ public class PlayerController extends Html5Controller {
 		}
 			
 		//getting video source
-		String videoId = (String) screen.getProperty("videoId");
+		String videoId = model.getProperty("/screen/videoId");
 		System.out.println("In video player controller got video id = "+videoId);
 		List<FsNode> raws = FSListManager.getNodes("/domain/mecanex/user/luce/video/"+videoId+"/rawvideo", 1, 0, 1);
 		if (raws.size() > 0) {
@@ -222,24 +222,24 @@ public class PlayerController extends Html5Controller {
 		
 		if (action.equals("video_relevancefeedback")) {
 			//signal player to pause first
-			app.setProperty("/videofeedback/ratebutton/clicked",value);
+			model.setProperty("/app/videofeedback/ratebutton/clicked",value);
 			return;
 		} else if (action.equals("video_ended")) {
 			//Enable relevance feedback button once video has ended
-			String deviceId = (String) screen.getProperty("deviceId");
+			String deviceId = model.getProperty("/screen/deviceId");
 			
 			System.out.println("Video has ended for device "+deviceId+", change value to propegate for additional actions");
 
-			model.setProperty("/domain/mecanex/app/demoplayer/device/"+deviceId, "video_ended", "true");
+			model.setProperty("/domain/mecanex/app/demoplayer/device/"+deviceId+"/video_ended", "true");
 			return;
 			
 		} else if (action.equals("video_play")) {
 			//Disable relevance feedback button once video is playing
-			String deviceId = (String) screen.getProperty("deviceId");
-			model.setProperty("/domain/mecanex/app/demoplayer/device/"+deviceId, "video_ended", "false");
+			String deviceId = model.getProperty("/screen/deviceId");
+			model.setProperty("/domain/mecanex/app/demoplayer/device/"+deviceId+"/video_ended", "false");
 		}
  		
-		MecanexEvent event = new MecanexEvent((String) screen.getProperty("username"), (String) screen.getProperty("videoId"), (String) screen.getProperty("deviceId"), action, value);
+		MecanexEvent event = new MecanexEvent(model.getProperty("/screen/username"), model.getProperty("/screen/videoId"), model.getProperty("/screen/deviceId"), action, value);
 		
 		ClientResource client = new ClientResource("http://sptool.netmode.ntua.gr/api/v1/videosignals");
 
@@ -289,18 +289,19 @@ public class PlayerController extends Html5Controller {
 	}
 	
 	public void treeChanged(String url) {
+		System.out.println("TREE CHANGE CALLED "+url);
 		url = url.substring(0, url.indexOf(","));
 		String updatedDevice = url.substring(url.lastIndexOf("/")+1);
 		
 		//Something changed on our device
-		if (((String) screen.getProperty("deviceId")).equals(updatedDevice)) {
+		if ((model.getProperty("/screen/deviceId")).equals(updatedDevice)) {
 			//check if the video changed
 			FsNode node = model.getNode(url);
 			String videoId = node.getProperty("videoId");
 			
 			if (videoId != null) {
-				if (!screen.getProperty("videoId").equals(videoId)) {
-					screen.setProperty("videoId", videoId);
+				if (!model.getProperty("/screen/videoId").equals(videoId)) {
+					model.setProperty("/screen/videoId", videoId);
 					loadScreen();
 				}
 			}

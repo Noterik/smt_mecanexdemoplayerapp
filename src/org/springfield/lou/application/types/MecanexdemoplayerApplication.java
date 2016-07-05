@@ -29,6 +29,7 @@ import org.springfield.lou.application.types.inputform.InputFormController;
 import org.springfield.lou.application.types.player.PlayerController;
 import org.springfield.lou.application.types.relevancefeedback.RelevanceFeedbackController;
 import org.springfield.lou.controllers.ScreenController;
+import org.springfield.lou.model.Model;
 import org.springfield.lou.screen.Screen;
 
 /**
@@ -53,24 +54,24 @@ public class MecanexdemoplayerApplication extends Html5Application {
 		 
 		 loadStyleSheet(s,"player");
 		 
-		 String deviceId = (String) s.getProperty("deviceId");
+		 String deviceId = s.getModel().getProperty("/screen/deviceId");
 		 if (deviceId == null) { 
 			 deviceId = UUID.randomUUID().toString();
-			 s.setProperty("deviceId", deviceId);
+			 s.getModel().setProperty("/screen/deviceId", deviceId);
 			 
 			 FsNode device = new FsNode("device", deviceId);
 			 Fs.insertNode(device, "/domain/mecanex/app/demoplayer/device/"+deviceId);
 		 }
-		 
 		 //Allow to override through parameters in url
 		if (s.getParameter("username") != null) {
 			System.out.println("Username is set through parameter to "+s.getParameter("username"));
-			s.setProperty("username", s.getParameter("username"));
+			s.getModel().setProperty("/screen/username", s.getParameter("username"));
 		}
 		if (s.getParameter("videoid") != null) {
 			System.out.println("Video id is set through parameter to "+s.getParameter("videoid"));
-			s.setProperty("videoId", s.getParameter("videoid"));
+			s.getModel().setProperty("/screen/videoId", s.getParameter("videoid"));
 		}
+		
 		 
 		 s.get("#screen").setViewProperty("template", "screen.mst");
 		 s.get("#screen").attach(new ScreenController());

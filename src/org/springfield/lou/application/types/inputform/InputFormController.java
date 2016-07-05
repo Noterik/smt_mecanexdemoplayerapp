@@ -52,8 +52,8 @@ public class InputFormController extends Html5Controller {
 		String videoId = "";
 		
 		if (screen!=null) {
-			username = (String) screen.getProperty("username");
-			videoId = (String) screen.getProperty("videoId");
+			username = model.getProperty("/screen/username");
+			videoId = model.getProperty("/screen/videoId");
 					
 			FsNode node = getControllerNode(selector);
 			if (node!=null) {
@@ -81,16 +81,16 @@ public class InputFormController extends Html5Controller {
 		String username = (String) data.get("username");
 		String videoId = (String) data.get("videoid");
 
-		String currentVideo = (String) s.getProperty("videoId");
+		String currentVideo = model.getProperty("/screen/videoId");
 		
 		//update in screen properties 
-		s.setProperty("username", username);
+		model.setProperty("/screen/username", username);
 		//update of videoid screen property done in PlayerController
 		
 		//reload video if new video is given
 		if (!currentVideo.equals(videoId)) {
-			String deviceId = (String) screen.getProperty("deviceId");
-			model.setProperty("/domain/mecanex/app/demoplayer/device/"+deviceId, "videoId", videoId);
+			String deviceId = model.getProperty("/screen/deviceId");
+			model.setProperty("/domain/mecanex/app/demoplayer/device/"+deviceId+"/videoId", videoId);
 		}
 	}
 	
@@ -104,7 +104,7 @@ public class InputFormController extends Html5Controller {
 		
 		System.out.println("Tree changed for device "+updatedDevice);
 		
-		if (((String) screen.getProperty("deviceId")).equals(updatedDevice)) {
+		if ((model.getProperty("/screen/deviceId")).equals(updatedDevice)) {
 			FsNode node = model.getNode(url);
 			System.out.println(node.asXML());
 		}
