@@ -1,7 +1,4 @@
-<form action="javascript:void(0);">
+{{usernameText}}: <input size="10" id="username" value="{{username}}" />
+{{videoidText}}: <input size="20" id="videoid" value="{{videoid}}" />
 
-{{usernameText}}: <div id="username"/>
-{{videoidText}}: <div id="videoid"/>
-
-<div id="submitButton" style="float: left;" />
-</form>
+<button id="submitButton" class="submitButton" >Submit</button>

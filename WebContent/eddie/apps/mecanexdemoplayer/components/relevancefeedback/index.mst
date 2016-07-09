@@ -1,6 +1,8 @@
 <div id="like" style="display:none;" />
-<div id="likeButton" style="float: left;" />
+<button id="likeButton" style="float: left;" class="submitButton">Like</button>
+
 <div id="dislike" style="display:none;" />
-<div id="dislikeButton" style="float: left;" />
+<button id="dislikeButton" style="float: left;" class="submitButton">Dislike</button>
+
 <div id="indifferent" style="display:none;" />
-<div id="indifferentButton" style="float: left;" />
+<button id="indifferentButton" style="float: left;" class="submitButton">Indifferent</button>

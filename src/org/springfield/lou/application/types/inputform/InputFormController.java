@@ -35,18 +35,14 @@ import org.springfield.lou.screen.Screen;
  */
 public class InputFormController extends Html5Controller {
 
-	private String template;
-	private JSONObject response;
 	
 	public InputFormController() {
-		response = new JSONObject();
 	}
 	
 	public void attach(String sel) {
 		selector = sel;
 		
-		response.put("language",screen.getLanguageCode());
-		response.put("id",screen.getId());
+
 		
 		String username = "";
 		String videoId = "";
@@ -57,21 +53,18 @@ public class InputFormController extends Html5Controller {
 					
 			FsNode node = getControllerNode(selector);
 			if (node!=null) {
-				template = node.getProperty("template");
-
-				response.put("usernameText", node.getProperty("usernameText"));
-				response.put("videoidText", node.getProperty("videoidText"));
-				
-				screen.get(selector).loadScript(this);
-				screen.get(selector).template(template);
+				JSONObject data = new JSONObject();
+				data.put("language",screen.getLanguageCode());
+				data.put("id",screen.getId());
+				data.put("videoid", videoId);
+				data.put("username", username);
+				data.put("usernameText", node.getProperty("usernameText"));
+				data.put("videoidText", node.getProperty("videoidText"));
+		 		screen.get(selector).parsehtml(data);
 			}
 		}
 		
-		loadHtml();
-		screen.get("#username").attach(new InputFieldController(username));
-		screen.get("#videoid").attach(new InputFieldController(videoId));
-		screen.get("#submitButton").attach(new SubmitButtonController());
-		screen.bind("#submitButton", "client", "submitButtonClicked", this);
+		screen.get("#submitButton").on("mouseup","username,videoid","submitButtonClicked",this);
 		
 		//Observe for changes
 		model.observeNode(this,"/domain/mecanex/app/demoplayer/*");
@@ -80,6 +73,8 @@ public class InputFormController extends Html5Controller {
 	public void submitButtonClicked(Screen s, JSONObject data) {
 		String username = (String) data.get("username");
 		String videoId = (String) data.get("videoid");
+		System.out.println("USERNAME="+username);
+		System.out.println("VIDEOID="+videoId);
 
 		String currentVideo = model.getProperty("/screen/videoId");
 		
@@ -94,9 +89,6 @@ public class InputFormController extends Html5Controller {
 		}
 	}
 	
-	private void loadHtml() {		
-		screen.get(selector).update(response);
-	}
 	
 	public void treeChanged(String url) {
 		url = url.substring(0, url.indexOf(","));

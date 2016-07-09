@@ -34,8 +34,6 @@ import org.restlet.resource.ClientResource;
 import org.restlet.util.Series;
 import org.springfield.fs.FsNode;
 import org.springfield.lou.application.types.MecanexdemoplayerApplication;
-import org.springfield.lou.application.types.inputform.InputFieldController;
-import org.springfield.lou.application.types.inputform.SubmitButtonController;
 import org.springfield.lou.controllers.Html5Controller;
 import org.springfield.lou.events.MecanexEvent;
 import org.springfield.lou.screen.Screen;
@@ -67,56 +65,39 @@ private static final String AUTHORIZATION_FILE = "/springfield/keys/mecanex-spto
 		response.put("id",screen.getId());
 		
 		if (screen!=null) {
-			FsNode node = getControllerNode(selector);
-			if (node!=null) {
-				template = node.getProperty("template");
-				
-				screen.get(selector).loadScript(this);
-				screen.get(selector).template(template);
-			}
+	 		screen.get(selector).parsehtml(new JSONObject());
+			
 			model.onPathUpdate("/app/videofeedback/","onRelevanceFeedback",this);
 			app = (MecanexdemoplayerApplication)screen.getApplication();
 		}
 		
-		loadHtml();
-		screen.get("#like").attach(new InputFieldController());
-		screen.get("#likeButton").attach(new SubmitButtonController());
-		screen.bind("#likeButton", "client", "rateButtonClicked", this);
-		screen.get("#dislike").attach(new InputFieldController());
-		screen.get("#dislikeButton").attach(new SubmitButtonController());
-		screen.bind("#dislikeButton", "client", "rateButtonClicked", this);
-		screen.get("#indifferent").attach(new InputFieldController());
-		screen.get("#indifferentButton").attach(new SubmitButtonController());
-		screen.bind("#indifferentButton", "client", "rateButtonClicked", this);
-		
+		//loadHtml();
+		screen.get("#likeButton").on("mouseup","likeClicked",this);
+		screen.get("#dislikeButton").on("mouseup","dislikeClicked",this);
+		screen.get("#indifferentButton").on("mouseup","indifferentClicked",this);
+				
 		authorizationKey = getAuthorizationKey();
 		
 		//Observe for changes
 		model.observeNode(this,"/domain/mecanex/app/demoplayer/*");
 	}
 	
-	//TODO: improve handling of what value is clicked
-	public void rateButtonClicked(Screen s, JSONObject data) {
-		 // turn menu on right away
-		
-		String like = (String) data.get("like");
-		String dislike = (String) data.get("dislike");
-		String indifferent = (String) data.get("indifferent");
-				
-		
-		String value = "";
-		
-		if (like != null) { value = "1"; }
-		if (dislike != null) { value = "-1"; }
-		if (indifferent != null) { value = "0"; }
-		
-		//signal player to pause first
-		model.setProperty("/app/relevancefeedback/ratebutton/clicked",value);
+	
+	public void likeClicked(Screen s, JSONObject data) {
+		System.out.println("like clicked");
+		model.setProperty("/app/relevancefeedback/ratebutton/clicked","1");
 	}
-
-	private void loadHtml() {		
-		screen.get(selector).update(response);
+	
+	public void dislikeClicked(Screen s, JSONObject data) {
+		System.out.println("dislike clicked");
+		model.setProperty("/app/relevancefeedback/ratebutton/clicked","-1");
 	}
+	
+	public void indifferentClicked(Screen s, JSONObject data) {
+		System.out.println("indifferent clicked");
+		model.setProperty("/app/relevancefeedback/ratebutton/clicked","0");
+	}
+	
 	
 	public void treeChanged(String url) {
 		url = url.substring(0, url.indexOf(","));
@@ -184,9 +165,6 @@ private static final String AUTHORIZATION_FILE = "/springfield/keys/mecanex-spto
 			System.out.println(e.toString());
 		}
 		
-		JSONObject data = new JSONObject();	
-		data.put("command","redirect");
-		data.put("url", "http://sptool.netmode.ntua.gr/video/recommendation");
-		screen.get("#relevancefeedback").update(data);
+		screen.get("#screen").location("http://sptool.netmode.ntua.gr/video/recommendation");
 	}
 }

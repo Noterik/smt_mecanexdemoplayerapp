@@ -75,8 +75,9 @@ public class MecanexdemoplayerApplication extends Html5Application {
 		 
 		 s.get("#screen").setViewProperty("template", "screen.mst");
 		 s.get("#screen").attach(new ScreenController());
-		 s.get("#inputform").attach(new InputFormController());
-		 s.get("#player").attach(new PlayerController());
-		 s.get("#relevancefeedback").attach(new RelevanceFeedbackController());
+		 
+		 s.get("#screen").append("div","inputform",new InputFormController());
+		  s.get("#screen").append("div","player",new PlayerController());
+		  s.get("#screen").append("div","relevancefeedback",new RelevanceFeedbackController());
 	 }
 }

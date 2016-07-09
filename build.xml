@@ -116,6 +116,7 @@
 			<!-- remove this line or use your own auto deploy method to get it into the lou upload dir -->
 			<arg value="/springfield/tomcat/bin/installapp_mecanex.sh"/>
 		</exec>
+
 	</target>
 	
 </project>
