@@ -61,26 +61,20 @@ public class PlayerController extends Html5Controller {
 	
 	private String template;
 	private String authorizationKey;
-	private JSONObject response;
+	//private JSONObject response;
 	private MecanexdemoplayerApplication app;
 	
 	public PlayerController() {
-		response = new JSONObject();
+	//	response = new JSONObject();
 	}
 	
 	public void attach(String sel) {
 		selector = sel;
 		
 		screen.bind("#player", "client", "playerEvent", this);
-		
-		response.put("language",screen.getLanguageCode());
-		response.put("id",screen.getId());
-
-		if (screen!=null) {	
-			loadScreen();
-			model.onPathUpdate("/app/relevancefeedback/","onRelevanceFeedback",this);
-			app = (MecanexdemoplayerApplication)screen.getApplication();
-		}
+	
+		loadScreen();
+		model.onPathUpdate("/app/relevancefeedback/","onRelevanceFeedback",this);
 
 		String deviceId = (String) model.getProperty("/screen/deviceId");
 		
@@ -93,13 +87,7 @@ public class PlayerController extends Html5Controller {
 		String videoSrc = "";
 		String videoPoster = "";
 		
-		FsNode node = getControllerNode(selector);
-		if (node!=null) {
-			template = node.getProperty("template");
-				
-			screen.get(selector).loadScript(this);
-			screen.get(selector).template(template);
-		}
+		screen.get(selector).loadScript(this); // still need this script, not enough events !
 			
 		//getting video source
 		String videoId = model.getProperty("/screen/videoId");
@@ -149,10 +137,15 @@ public class PlayerController extends Html5Controller {
 				videoPoster = tmp;
 			}
 		}
-		response.put("videoSrc", videoSrc);
-		response.put("videoPoster", videoPoster);
 		
-		loadHtml();		
+		JSONObject data = new JSONObject();
+		data.put("language",screen.getLanguageCode());
+		data.put("id",screen.getId());
+		data.put("videoSrc", videoSrc);
+		data.put("videoPoster", videoPoster);
+ 		screen.get(selector).parsehtml(data);
+
+	//	loadHtml();		
 	}
 	
 	private String getTicket(String video) {		
@@ -288,6 +281,7 @@ public class PlayerController extends Html5Controller {
 		}
 	}
 	
+	/*
 	public void treeChanged(String url) {
 		System.out.println("TREE CHANGE CALLED "+url);
 		url = url.substring(0, url.indexOf(","));
@@ -307,10 +301,7 @@ public class PlayerController extends Html5Controller {
 			}
 		}
 	}
-	
-	private void loadHtml() {
-		screen.get(selector).update(response);
-	}
+	*/
 	
 	private String getAuthorizationKey() {
 		try {

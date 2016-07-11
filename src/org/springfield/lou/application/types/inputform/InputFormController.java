@@ -66,8 +66,7 @@ public class InputFormController extends Html5Controller {
 		
 		screen.get("#submitButton").on("mouseup","username,videoid","submitButtonClicked",this);
 		
-		//Observe for changes
-		model.observeNode(this,"/domain/mecanex/app/demoplayer/*");
+
 	}
 	
 	public void submitButtonClicked(Screen s, JSONObject data) {
@@ -90,15 +89,5 @@ public class InputFormController extends Html5Controller {
 	}
 	
 	
-	public void treeChanged(String url) {
-		url = url.substring(0, url.indexOf(","));
-		String updatedDevice = url.substring(url.lastIndexOf("/")+1);
-		
-		System.out.println("Tree changed for device "+updatedDevice);
-		
-		if ((model.getProperty("/screen/deviceId")).equals(updatedDevice)) {
-			FsNode node = model.getNode(url);
-			System.out.println(node.asXML());
-		}
-	}
+
 }

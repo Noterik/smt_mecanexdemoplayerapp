@@ -14,8 +14,8 @@
 	</view>
 	
 	<view id="#player">		
+		<template>player/index.mst</template>
 		<controller id="PlayerController">
-			<template>player/index.mst</template>
 			<javascript>player/VideoPlayerController.js</javascript>
 		</controller>
 	</view>

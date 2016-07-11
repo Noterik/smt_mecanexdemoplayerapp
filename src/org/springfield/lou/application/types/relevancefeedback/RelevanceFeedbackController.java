@@ -51,21 +51,19 @@ private static final String AUTHORIZATION_FILE = "/springfield/keys/mecanex-spto
 	
 	private String template;
 	private String authorizationKey;
-	private JSONObject response;
 	private MecanexdemoplayerApplication app;
 	
 	public RelevanceFeedbackController() {
-		response = new JSONObject();
 	}
 	
 	public void attach(String sel) {
 		selector = sel;
 		
-		response.put("language",screen.getLanguageCode());
-		response.put("id",screen.getId());
-		
 		if (screen!=null) {
-	 		screen.get(selector).parsehtml(new JSONObject());
+			JSONObject data = new JSONObject();
+			data.put("language",screen.getLanguageCode());
+			data.put("id",screen.getId());
+	 		screen.get(selector).parsehtml(data);
 			
 			model.onPathUpdate("/app/videofeedback/","onRelevanceFeedback",this);
 			app = (MecanexdemoplayerApplication)screen.getApplication();
@@ -78,8 +76,6 @@ private static final String AUTHORIZATION_FILE = "/springfield/keys/mecanex-spto
 				
 		authorizationKey = getAuthorizationKey();
 		
-		//Observe for changes
-		model.observeNode(this,"/domain/mecanex/app/demoplayer/*");
 	}
 	
 	
@@ -99,18 +95,7 @@ private static final String AUTHORIZATION_FILE = "/springfield/keys/mecanex-spto
 	}
 	
 	
-	public void treeChanged(String url) {
-		url = url.substring(0, url.indexOf(","));
-		String updatedDevice = url.substring(url.lastIndexOf("/")+1);
-		
-		System.out.println("Tree changed for device "+updatedDevice);
-		
-		if ((model.getProperty("/screen/deviceId")).equals(updatedDevice)) {
-			FsNode node = model.getNode(url);
-			System.out.println(node.asXML());
-			//check if the video has ended to show buttons
-		}
-	}
+
 	
 	private String getAuthorizationKey() {
 		try {
